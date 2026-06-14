@@ -38,5 +38,5 @@ public abstract class Personagem extends Desenhavel {
         this.hp = novoHp;
     }
     
-    public abstract char mover(char[][] tabuleiro, Scanner teclado);
+    public abstract Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado);
 }

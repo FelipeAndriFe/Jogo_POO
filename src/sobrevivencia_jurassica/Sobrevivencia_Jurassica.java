@@ -4,11 +4,13 @@
  */
 package sobrevivencia_jurassica;
 
+import Desenhaveis.Blank;
 import java.util.ArrayList;
 import java.util.List;
 import Desenhaveis.Desenhavel;
 import Desenhaveis.Dinossauro;
 import Desenhaveis.Jogador;
+import Desenhaveis.Parede;
 import Desenhaveis.Personagem;
 import java.util.Scanner;
 
@@ -26,17 +28,17 @@ public class Sobrevivencia_Jurassica {
         
         int linhas = 10;
         int colunas = 10;
-        char[][] tabuleiro = new char[linhas][colunas];
+        Desenhavel[][] tabuleiro = new Desenhavel[linhas][colunas];
         
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
-                tabuleiro[i][j] = '0';
+                tabuleiro[i][j] = new Blank(j, i);
             }
         }
-        tabuleiro[4][4] = '1';
-        tabuleiro[5][4] = '1';
-        tabuleiro[6][4] = '1';
-        tabuleiro[3][4] = '1';
+        tabuleiro[4][4] = new Parede(4, 4);
+        tabuleiro[5][4] = new Parede(5, 4);
+        tabuleiro[6][4] = new Parede(6, 4);
+        tabuleiro[3][4] = new Parede(3, 4);
         
         Personagem jogador = new Jogador(2, 2, 3, 1, 1, 3);
         Personagem raptor = new Dinossauro(8, 8, 'V', 2, 1, 2, true, false);
@@ -49,27 +51,36 @@ public class Sobrevivencia_Jurassica {
         
         for (int i = 0; i < ativos.size(); i++) {
             Personagem obj = ativos.get(i);
-            tabuleiro[obj.getY()][obj.getX()] = obj.getSimbolo();
+            tabuleiro[obj.getY()][obj.getX()] = obj;
         }
         
         imprimir(tabuleiro);
         while(true) {
-            jogador.mover(tabuleiro, teclado);
+            Desenhavel colisao;
+            
+            colisao = jogador.mover(tabuleiro, teclado);
+            if (colisao instanceof Dinossauro) ativos.remove((Personagem) colisao);
             imprimir(tabuleiro);
             
             for (int i = 0; i < ativos.size(); i++) {
-                char colisao = ativos.get(i).mover(tabuleiro, teclado);
+                colisao = ativos.get(i).mover(tabuleiro, teclado);
+                if (colisao instanceof Dinossauro) ativos.remove((Personagem) colisao);
+                if (colisao instanceof Jogador) ativos.remove(i);
             }
             imprimir(tabuleiro);
         }
     }
     
-    public static void imprimir(char[][] tabuleiro) {
+    public static void imprimir(Desenhavel[][] tabuleiro) {
         for (int i = 0; i < tabuleiro[0].length; i++) {
             for (int j = 0; j < tabuleiro.length; j++) {
-                System.out.printf("%c ", tabuleiro[i][j]);
+                System.out.printf("%c ", tabuleiro[i][j].getSimbolo());
             }
             System.out.print("\n");
         }
+    }
+    
+    public static void combate(Personagem atacante, Personagem defesor) {
+        
     }
 }

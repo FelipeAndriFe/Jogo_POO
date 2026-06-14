@@ -21,39 +21,46 @@ public class Dinossauro extends Personagem {
     }
     
     @Override
-    public char mover(char[][] tabuleiro, Scanner teclado) {
-        int direcao = (int) (Math.random() * 4);
+    public Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado) {
         int oldX = getX();
         int oldY = getY();
         int newX = oldX;
         int newY = oldY;
-        char colisao = '0';
+        Desenhavel colisao = null;
         
-        switch(direcao) {
-            case 0:
-                newX = oldX + getVelocidade();
-                break;
-            case 1:
-                newY = oldY - getVelocidade();
-                break;
-            case 2:
-                newX = oldX - getVelocidade();
-                break;
-            case 3:
-                newY = oldY + getVelocidade();
-                break;
-        }
-        
-        if (newX >= 0 && newX < tabuleiro[0].length &&
-            newY >= 0 && newY < tabuleiro.length &&
-            (tabuleiro[newY][newX] == '0' || tabuleiro[newY][newX] == 'P')) {
+        for (int i = 0; i < getVelocidade(); i++) {
+            int direcao = (int) (Math.random() * 4);
+            switch(direcao) {
+                case 0:
+                    newX = oldX + 1;
+                    break;
+                case 1:
+                    newY = oldY - 1;
+                    break;
+                case 2:
+                    newX = oldX - 1;
+                    break;
+                case 3:
+                    newY = oldY + 1;
+                    break;
+            }
+
+            if (newX >= 0 && newX < tabuleiro[0].length &&
+                newY >= 0 && newY < tabuleiro.length &&
+                (tabuleiro[newY][newX] instanceof Blank || tabuleiro[newY][newX] instanceof Jogador)) {
+
+                colisao = tabuleiro[newY][newX];
+
+                if (tabuleiro[newY][newX] instanceof Blank) tabuleiro[newY][newX] = this;
+                tabuleiro[oldY][oldX] = new Blank(oldX, oldY);
+                setX(newX);
+                setY(newY);
+
+                if (colisao instanceof Jogador) return colisao;
+            }
             
-            colisao = tabuleiro[newY][newX];
-            
-            tabuleiro[newY][newX] = getSimbolo();
-            tabuleiro[oldY][oldX] = '0';
-            setX(newX);
-            setY(newY);
+            oldX = newX;
+            oldY = newY;
         }
         
         return colisao;

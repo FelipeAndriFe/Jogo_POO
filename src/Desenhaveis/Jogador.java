@@ -27,38 +27,45 @@ public class Jogador extends Personagem {
     }
     
     @Override
-    public char mover(char[][] tabuleiro, Scanner teclado) {
-        char direcao = teclado.next().charAt(0);
-        
+    public Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado) {
+        char direcao;
         int oldX = getX();
         int oldY = getY();
         int newX = oldX;
         int newY = oldY;
-        char colisao = '0';
+        Desenhavel colisao = null;
         
-        switch(direcao) {
-            case 'd':
-                newX = oldX + getVelocidade();
-                break;
-            case 'w':
-                newY = oldY - getVelocidade();
-                break;
-            case 'a':
-                newX = oldX - getVelocidade();
-                break;
-            case 's':
-                newY = oldY + getVelocidade();
-                break;
-        }
+        do {
+            direcao = teclado.next().charAt(0);
+            switch(direcao) {
+                case 'd':
+                    newX = oldX + 1;
+                    break;
+                case 'w':
+                    newY = oldY - 1;
+                    break;
+                case 'a':
+                    newX = oldX - 1;
+                    break;
+                case 's':
+                    newY = oldY + 1;
+                    break;
+                case '0':
+                    System.exit(0);
+                    break;
+                default:
+                    break;
+            }
+        } while (direcao != 'a' && direcao != 'd' && direcao != 'w' && direcao != 's');
         
         if (newX >= 0 && newX < tabuleiro[0].length &&
             newY >= 0 && newY < tabuleiro.length &&
-            tabuleiro[newY][newX] != '1') {
+            !(tabuleiro[newY][newX] instanceof Parede)) {
             
             colisao = tabuleiro[newY][newX];
             
-            tabuleiro[newY][newX] = getSimbolo();
-            tabuleiro[oldY][oldX] = '0';
+            tabuleiro[newY][newX] = this;
+            tabuleiro[oldY][oldX] = new Blank(oldX, oldY);
             setX(newX);
             setY(newY);
         }
