@@ -57,10 +57,10 @@ public class Dinossauro extends Personagem {
                 setY(newY);
 
                 if (colisao instanceof Jogador) return colisao;
+                
+                oldX = newX;
+                oldY = newY;
             }
-            
-            oldX = newX;
-            oldY = newY;
         }
         
         return colisao;
