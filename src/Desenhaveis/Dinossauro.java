@@ -20,6 +20,14 @@ public class Dinossauro extends Personagem {
         this.tomaDanoDeArma = tomaDanoDeArma;
     }
     
+    public boolean getTomaDanoDeSoco() {
+        return tomaDanoDeSoco;
+    }
+    
+    public boolean getTomaDanoDeArma() {
+        return tomaDanoDeArma;
+    }
+    
     @Override
     public Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado) {
         int oldX = getX();

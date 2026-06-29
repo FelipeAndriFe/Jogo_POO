@@ -16,6 +16,7 @@ import Desenhaveis.Personagem;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.Random;
 
 /**
  *
@@ -84,17 +85,63 @@ public class Sobrevivencia_Jurassica {
         imprimir(tabuleiro);
         while(true) {
             Desenhavel colisao;
-            
+            int flag;
             colisao = ativos.get(0).mover(tabuleiro, teclado);
-            if (colisao instanceof Dinossauro) ativos.remove((Personagem) colisao);
-            imprimir(tabuleiro);
-            
-            for (int i = 0; i < ativos.size(); i++) {
-                colisao = ativos.get(i).mover(tabuleiro, teclado);
-                if (colisao instanceof Dinossauro) ativos.remove((Personagem) colisao);
-                if (colisao instanceof Jogador) ativos.remove(i);
+            // caso dinossauro bata no player
+            if (colisao instanceof Dinossauro) {
+                flag = combate((Jogador) ativos.get(0), (Dinossauro) colisao, teclado);
+                if( flag == 2) {
+                        ativos.remove((Personagem) colisao);
+                } else if ( flag == 1 ) {
+                        System.exit(0);
+                } else {
+                    System.out.println("Covarde.");        
+                    System.out.println("Para onde deseja se mover? ");
+                    ativos.get(0).mover(tabuleiro, teclado);
+                    ((Dinossauro) colisao).mover(tabuleiro, teclado); 
+                }
             }
             imprimir(tabuleiro);
+            
+            for (int i = 0; i < ativos.size(); i++) {        
+                if ( ativos.size() == 1 ) {
+                    System.out.println("Parabens Ganhastes o Jogo!!!");
+                    System.exit(0);
+                }
+                colisao = ativos.get(i).mover(tabuleiro, teclado);
+                // caso o dinossauro bata no player
+                if (colisao instanceof Dinossauro) {
+                    flag = combate((Jogador) ativos.get(0), (Dinossauro) colisao, teclado);
+                    if( flag == 2) {
+                        ativos.remove((Personagem) colisao);
+                    } else if ( flag == 1 ) {
+                        System.exit(0);
+                    } else {
+                        System.out.println("Covarde."); 
+                        System.out.println("Para onde deseja se mover? ");
+                        ativos.get(0).mover(tabuleiro, teclado);
+                        ((Dinossauro) colisao).mover(tabuleiro, teclado);
+                        continue;
+                    }
+                }
+                // caso o player bata no dinossauro
+                if (colisao instanceof Jogador) {
+                    flag = combate((Jogador) colisao, (Dinossauro) ativos.get(i), teclado);
+                    if( flag == 2) {
+                        ativos.remove(i);
+                    } else if ( flag == 1 ) {
+                        System.exit(0);
+                    } else {
+                        System.out.println("Covarde.");            
+                        System.out.println("Para onde deseja se mover? ");
+                        ((Jogador) colisao).mover(tabuleiro, teclado);
+                        ativos.get(i).mover(tabuleiro, teclado);
+                        continue;
+                    }
+                }
+            }
+            imprimir(tabuleiro);
+            
         }
     }
     
@@ -107,9 +154,138 @@ public class Sobrevivencia_Jurassica {
         }
     }
     
-    public static void combate(Personagem atacante, Personagem defesor) {
-        
+    public static int combate(Jogador player, Dinossauro dino, Scanner teclado) {
+        System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        int morte = 0;
+        while( morte == 0 ) {
+            System.out.println("Vida Dinossauro: " + dino.getHp() );
+            System.out.println("Vida Player: " + player.getHp() );
+            
+            System.out.println("""
+                               1. Atacar
+                               2. Fugir
+                               Qual acao deseja fazer?""");
+            int acao = teclado.nextInt();
+            switch(acao) {
+                case 1:
+                    ataque(player, dino, teclado);
+                    if ( dino.getHp() < 1 ) {
+                        System.out.println("Dinossauro morto.");
+                        morte = 2;
+                        break;
+                    }
+                            
+                    defesa(player, dino);
+                    if ( player.getHp() < 1 ){
+                        System.out.println("Player morreu.");
+                        morte = 1;
+                        break;
+                    }
+                    break;
+                    
+                case 2:
+                    return 0;
+                    
+                default:
+                    System.out.println("Digitou errado, logo foi burro, logo perdeu a vez\n\nOtario.\n\n"); 
+                    defesa(player, dino);
+                    if ( player.getHp() < 1 ){
+                        System.out.println("Player morreu.");
+                        morte = 1;
+                        break;
+                    }
+                    break;
+            }
+            
+        }
+        System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        return morte;
     }
+    
+    public static void ataque ( Jogador player, Dinossauro dino, Scanner teclado ) {
+        Random rand = new Random();
+        int dado1 = rand.nextInt((6 - 1) + 1) + 1;
+        System.out.println("""
+            1. Mao
+            2. Bastao Eletrico
+            3. Arma de Dardos
+            Qual arma deseja usar?""");
+        int decisao = teclado.nextInt();
+        switch(decisao) {
+            case 1:
+                if ( dino.getTomaDanoDeSoco() ) {
+                    System.out.println("Dado do player: " + dado1);
+                    if ( dado1 > 4 ) {
+                        System.out.println("Dano dado: 2\n");
+                        dino.setHp(dino.getHp() - player.getDano() * 2);
+                    } else if ( dado1 > 2 ) {
+                        System.out.println("Dano dado: 1\n");
+                        dino.setHp(dino.getHp() - player.getDano());
+                    } else 
+                        System.out.println("Nenhum dano dado\n");
+
+                    System.out.println("Vida Dinossauro: " + dino.getHp() );
+                    System.out.println("Vida Player: " + player.getHp() );
+                } else {
+                    System.out.println("Ele e muito forte para matar no soco \nOh nao\n");
+                }
+                
+                break;
+                            
+            case 2:
+                if ( player.getBastao() ) {
+                    System.out.println("Dado do player: " + dado1);
+                    if ( dado1 > 4 ) {
+                        System.out.println("Dano dado: 2\n");
+                        dino.setHp(dino.getHp() - player.getDano() * 2);
+                    } else if ( dado1 > 1 ) {
+                        System.out.println("Dano dado: 1\n");
+                        dino.setHp(dino.getHp() - player.getDano());
+                    } else 
+                        System.out.println("Nenhum dano dado\n");
+
+                    System.out.println("Vida Dinossauro: " + dino.getHp() );
+                    System.out.println("Vida Player: " + player.getHp() );
+
+                } else {
+                    System.out.println("Tentou usar arma que nao tem, logo perdeu a vez\n\nBurro.\n\n");
+                }
+                break;
+
+            case 3:
+                if ( player.getArma() ) {
+                    if ( dino.getTomaDanoDeArma() ) {
+                        System.out.println(player.getMunicao());
+                        dino.setHp(dino.getHp() - player.getDano() * 2);
+                        player.setMunicao();
+                        System.out.println(player.getMunicao());
+                        System.out.println("Vida Dinossauro: " + dino.getHp() );
+                        System.out.println("Vida Player: " + player.getHp() );
+                    } else {
+                        System.out.println("Ele e muito rapido para acertar o tiro \nOh nao\n");
+                    }
+                } else {
+                    System.out.println("Tentou usar arma que nao tem, logo perdeu a vez\n\nBurro.\n\n");
+                }
+                break;
+
+            default:
+                System.out.println("Digitou errado, logo foi burro, logo perdeu a vez\n\nOtario.\n\n");
+                break;
+        }
+    }
+    
+    public static void defesa ( Jogador player, Personagem dino ) {
+        Random rand = new Random();
+        int dado2 = rand.nextInt((6 - 1) + 1) + 1;
+        System.out.println("Dado de defesa do player: " + dado2);
+        if ( dado2 > player.getPercepcao() ) {
+            player.setHp( player.getHp() - 1 );
+            System.out.println("Player tomou 1 de dano.\n");
+        } else
+            System.out.println("Player nao tomou dano.\n");
+    }
+
     
     public static void createObject(int x, int y, char simbolo, List<Personagem> ativos, Desenhavel[][] tabuleiro, int conteudo) {
         switch(simbolo) {

@@ -26,6 +26,42 @@ public class Jogador extends Personagem {
         this.municao = 0;
     }
     
+    public int getPercepcao() {
+        return percepcao;
+    }    
+    
+    public boolean getBastao() {
+        return temBastao;
+    }
+    
+    public boolean getArma() {
+        return temArma;
+    }
+        
+    public boolean getKit() {
+        return temBastao;
+    }
+    
+    public int getMunicao() {
+        return municao;
+    }
+    
+    public void setBastao(boolean Bastao) {
+        this.temBastao = Bastao;
+    }
+    
+    public void setArma(boolean Arma) {
+        this.temBastao = Arma;
+    }
+        
+    public void setKit(boolean Kit) {
+        this.temKit = Kit;
+    }
+    
+    public void setMunicao() {
+        this.municao -= 1;
+    }
+    
     @Override
     public Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado) {
         char direcao;
