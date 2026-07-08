@@ -20,6 +20,14 @@ public class Dinossauro extends Personagem {
         this.tomaDanoDeArma = tomaDanoDeArma;
     }
     
+    public boolean getTomaDanoDeSoco() {
+        return tomaDanoDeSoco;
+    }
+    
+    public boolean getTomaDanoDeArma() {
+        return tomaDanoDeArma;
+    }
+    
     @Override
     public Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado) {
         int oldX = getX();
@@ -47,11 +55,11 @@ public class Dinossauro extends Personagem {
 
             if (newX >= 0 && newX < tabuleiro[0].length &&
                 newY >= 0 && newY < tabuleiro.length &&
-                (tabuleiro[newY][newX] instanceof Blank || tabuleiro[newY][newX] instanceof Jogador)) {
+                (tabuleiro[newY][newX] instanceof Blank || tabuleiro[newY][newX] instanceof Jogador || tabuleiro[newY][newX] instanceof Caixa)) {
 
                 colisao = tabuleiro[newY][newX];
 
-                if (tabuleiro[newY][newX] instanceof Blank) tabuleiro[newY][newX] = this;
+                if (tabuleiro[newY][newX] instanceof Blank || tabuleiro[newY][newX] instanceof Caixa) tabuleiro[newY][newX] = this;
                 tabuleiro[oldY][oldX] = new Blank(oldX, oldY);
                 setX(newX);
                 setY(newY);

@@ -11,7 +11,7 @@ import java.util.Scanner;
  * @author felip
  */
 public class Jogador extends Personagem {
-    private final int percepcao;
+    private int percepcao;
     private boolean temBastao;
     private boolean temArma;
     private boolean temKit;
@@ -24,6 +24,46 @@ public class Jogador extends Personagem {
         this.temArma = false;
         this.temKit = false;
         this.municao = 0;
+    }
+    
+    public int getPercepcao() {
+        return percepcao;
+    }
+    
+    public boolean getBastao() {
+        return temBastao;
+    }
+    
+    public boolean getArma() {
+        return temArma;
+    }
+        
+    public boolean getKit() {
+        return temKit;
+    }
+    
+    public int getMunicao() {
+        return municao;
+    }
+    
+    public void setPercepcao(int percepcao) {
+        this.percepcao = percepcao;
+    }
+    
+    public void setBastao(boolean Bastao) {
+        this.temBastao = Bastao;
+    }
+    
+    public void setArma(boolean Arma) {
+        this.temArma = Arma;
+    }
+        
+    public void setKit(boolean Kit) {
+        this.temKit = Kit;
+    }
+    
+    public void setMunicao(int X) {
+        this.municao += X;
     }
     
     @Override
@@ -49,9 +89,6 @@ public class Jogador extends Personagem {
                     break;
                 case 's':
                     newY = oldY + 1;
-                    break;
-                case '0':
-                    System.exit(0);
                     break;
                 default:
                     break;
