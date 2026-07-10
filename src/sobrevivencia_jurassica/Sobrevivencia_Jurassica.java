@@ -13,10 +13,12 @@ import Desenhaveis.Dinossauro;
 import Desenhaveis.Jogador;
 import Desenhaveis.Parede;
 import Desenhaveis.Personagem;
+import Sistemas.Jogo;
+import Sistemas.MenuManager;
+import Sistemas.Tabuleiro;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import java.util.Random;
 
 /**
  *
@@ -35,7 +37,6 @@ public class Sobrevivencia_Jurassica {
         List<Personagem> ativos = new ArrayList<>();
         File mapFile = null;
         Scanner teclado = new Scanner(System.in);
-        boolean debugAtivo = false;
         
         int mapa = (int) (Math.random() * 3);
         
@@ -57,7 +58,7 @@ public class Sobrevivencia_Jurassica {
                     String token = readFile.next();
                     char lido = token.charAt(0);
 
-                    createObject(j, i, lido, ativos, tabuleiro, conteudo);
+                    createObject(j, i, lido, ativos, tabuleiro, conteudo, teclado);
                     if (lido == 'X') conteudo++;
                 }
             }
@@ -77,131 +78,22 @@ public class Sobrevivencia_Jurassica {
                 for (int j = 0; j < colunas; j++) {
                     char lido = template[i][j];
 
-                    createObject(j, i, lido, ativos, tabuleiro, conteudo);
+                    createObject(j, i, lido, ativos, tabuleiro, conteudo, teclado);
                     if (lido == 'X') conteudo++;
                 }
             }
         }
-
-        System.out.println("Bem-vindo ao Sobrevivencia Jurassica!");
-        System.out.println("1. Novo Jogo");
-        System.out.println("2. Sair");
         
-        char escolha = teclado.next().charAt(0);
-               
-        switch (escolha) {
-            case '1':
-                System.out.println("""
-                    1. Facil
-                    2. Medio
-                    3. Dificil
-                    """);
+        Tabuleiro tab = new Tabuleiro(tabuleiro, linhas, colunas);
 
-                char dificuldade = teclado.next().charAt(0);
-
-                switch (dificuldade) {
-                    case '1':
-                        ((Jogador) ativos.get(0)).setPercepcao(3);
-                        break;
-
-                    case '2':
-                        ((Jogador) ativos.get(0)).setPercepcao(2);
-                        break;
-
-                    case '3':
-                        ((Jogador) ativos.get(0)).setPercepcao(1);
-                        break;
-
-                    default:
-                        break;
-                }
-            break;
-            
-            case '2':
-                System.exit(0);
-                break;
-                
-            default:
-                System.out.println("Digitou errado. Tchau.");
-                System.exit(0);
-        }
+        MenuManager menuManager = new MenuManager();
         
-        imprimir(tabuleiro, (Jogador) ativos.get(0), debugAtivo);
-            
-        while (true) {
-            Desenhavel colisao;
-            int flag;
-            debugAtivo = exibirMenu((Jogador) ativos.get(0), debugAtivo, teclado);
-            colisao = ativos.get(0).mover(tabuleiro, teclado);
-            
-            if (colisao instanceof Caixa) abrirCaixa((Jogador) ativos.get(0), (Caixa) colisao);
-            
-            // caso player bata no dinossauro
-            if (colisao instanceof Dinossauro) {
-                flag = combate((Jogador) ativos.get(0), (Dinossauro) colisao, teclado);
-                if (flag == 2) {
-                        ativos.remove((Personagem) colisao);
-                } else if (flag == 1) {
-                        System.exit(0);
-                } else {
-                    System.out.println("Covarde.");        
-                    System.out.println("Para onde deseja se mover? ");
-                    ativos.get(0).mover(tabuleiro, teclado);
-                    ((Dinossauro) colisao).mover(tabuleiro, teclado); 
-                }
-            }
-            imprimir(tabuleiro, (Jogador) ativos.get(0), debugAtivo);
-            
-            for (int i = 0; i < ativos.size(); i++) {        
-                if (ativos.size() == 1) {
-                    System.out.println("Parabens Ganhastes o Jogo!!!");
-                    System.exit(0);
-                }
-                
-                if (i == 0) {
-                    debugAtivo = exibirMenu((Jogador) ativos.get(0), debugAtivo, teclado);;
-                }
-                colisao = ativos.get(i).mover(tabuleiro, teclado);
-                
-                if (i == 0) {
-                    if (colisao instanceof Caixa) abrirCaixa((Jogador) ativos.get(0), (Caixa) colisao);
-                }
-                
-                // caso o player bata no dinossauro
-                if (colisao instanceof Dinossauro) {
-                    flag = combate((Jogador) ativos.get(0), (Dinossauro) colisao, teclado);
-                    if (flag == 2) {
-                        ativos.remove((Personagem) colisao);
-                    } else if (flag == 1) {
-                        System.exit(0);
-                    } else {
-                        System.out.println("Covarde."); 
-                        System.out.println("Para onde deseja se mover? ");
-                        ativos.get(0).mover(tabuleiro, teclado);
-                        ((Dinossauro) colisao).mover(tabuleiro, teclado);
-                        continue;
-                    }
-                }
-                // caso o dinossauro bata no player
-                if (colisao instanceof Jogador) {
-                    flag = combate((Jogador) colisao, (Dinossauro) ativos.get(i), teclado);
-                    if (flag == 2) {
-                        ativos.remove(i);
-                    } else if (flag == 1) {
-                        System.exit(0);
-                    } else {
-                        System.out.println("Covarde.");            
-                        System.out.println("Para onde deseja se mover? ");
-                        ((Jogador) colisao).mover(tabuleiro, teclado);
-                        ativos.get(i).mover(tabuleiro, teclado);
-                        continue;
-                    }
-                }
-            }
-            imprimir(tabuleiro, (Jogador) ativos.get(0), debugAtivo);
-        }
+        Jogo jogo = new Jogo(tab, ativos, menuManager, teclado);
+        
+        jogo.start();
     }
     
+    /*
     public static int combate (Jogador player, Dinossauro dino, Scanner teclado) {
         System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
         int morte = 0;
@@ -334,10 +226,12 @@ public class Sobrevivencia_Jurassica {
             System.out.println("Player nao tomou dano.\n");
     }
     
-    public static void createObject(int x, int y, char simbolo, List<Personagem> ativos, Desenhavel[][] tabuleiro, int conteudo) {
+    */
+    
+    public static void createObject(int x, int y, char simbolo, List<Personagem> ativos, Desenhavel[][] tabuleiro, int conteudo, Scanner teclado) {
         switch (simbolo) {
             case 'P':
-                tabuleiro[y][x] = new Jogador(x, y, 3, 1, 1, 3);
+                tabuleiro[y][x] = new Jogador(x, y, 5, 1, 1, 3, teclado);
                 ativos.add(0, (Personagem)tabuleiro[y][x]);
                 break;
             case '1':
@@ -367,6 +261,8 @@ public class Sobrevivencia_Jurassica {
                 break;
         }
     }
+    
+    /*
     
     public static void abrirCaixa(Jogador player, Caixa caixa) {
         int conteudo = caixa.getConteudo();
@@ -402,11 +298,7 @@ public class Sobrevivencia_Jurassica {
     
     public static boolean exibirMenu(Jogador jogador, boolean debugAtivo, Scanner teclado) {
 
-            System.out.println("\nEscolha uma opcao:");
-            System.out.println("1. Mover");
-            System.out.println("2. Cura");
-            System.out.println("3. DEBUG");
-            System.out.println("4. Sair");
+            
 
             char opcao;
             
@@ -480,4 +372,6 @@ public class Sobrevivencia_Jurassica {
             System.out.print("\n");
         }
     }
+
+    */
 }

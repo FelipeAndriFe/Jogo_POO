@@ -4,6 +4,7 @@
  */
 package Desenhaveis;
 
+import Sistemas.Tabuleiro;
 import java.util.Scanner;
 
 /**
@@ -14,12 +15,14 @@ public abstract class Personagem extends Desenhavel {
     private int hp;
     private int dano;
     private int velocidade;
+    private int maxHp;
     
     public Personagem(int x, int y, char simbolo, int hp, int dano, int velocidade) {
         super(x, y, simbolo);
         this.hp = hp;
         this.dano = dano;
         this.velocidade = velocidade;
+        this.maxHp = hp;
     }
     
     public int getHp() {
@@ -35,8 +38,12 @@ public abstract class Personagem extends Desenhavel {
     }
     
     public void setHp(int novoHp) {
-        this.hp = novoHp;
+        if (novoHp > maxHp) {
+            this.hp = maxHp;
+        } else {
+            this.hp = novoHp;
+        }
     }
     
-    public abstract Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado);
+    public abstract Desenhavel mover(Tabuleiro tabuleiro);
 }

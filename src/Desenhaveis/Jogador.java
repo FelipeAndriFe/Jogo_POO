@@ -4,70 +4,75 @@
  */
 package Desenhaveis;
 
+import Itens.ArmaDeDardos;
+import Itens.Bastao;
+import Itens.KitMedico;
+import Sistemas.Tabuleiro;
 import java.util.Scanner;
 
 /**
  *
  * @author felip
  */
-public class Jogador extends Personagem {
+public class Jogador extends Personagem implements Combatente {
     private int percepcao;
-    private boolean temBastao;
-    private boolean temArma;
-    private boolean temKit;
-    private int municao;
+    private Bastao bastao;
+    private ArmaDeDardos arma;
+    private KitMedico kit;
+    private Scanner teclado;
     
-    public Jogador(int x, int y, int hp, int dano, int velocidade, int percepcao) {
+    public Jogador(int x, int y, int hp, int dano, int velocidade, int percepcao, Scanner teclado) {
         super(x, y, 'P', hp, dano, velocidade);
         this.percepcao = percepcao;
-        this.temBastao = false;
-        this.temArma = false;
-        this.temKit = false;
-        this.municao = 0;
+        this.bastao = null;
+        this.arma = null;
+        this.kit = new KitMedico();
+        this.teclado = teclado;
+    }
+    
+    public void pegarKit() {
+        kit.setQuantidade(kit.getQuantidade() + 1);    
+    }
+    
+    public void pegarArmaDeDardos() {
+        if (arma == null) {
+            arma = new ArmaDeDardos();
+        } else {
+            arma.setMunicao(arma.getMunicao() + 1);
+        }
+    }
+    
+    public void pegarBastao() {
+        if (bastao == null) {
+            bastao = new Bastao();
+        }
     }
     
     public int getPercepcao() {
         return percepcao;
     }
     
-    public boolean getBastao() {
-        return temBastao;
-    }
-    
-    public boolean getArma() {
-        return temArma;
-    }
-        
-    public boolean getKit() {
-        return temKit;
-    }
-    
-    public int getMunicao() {
-        return municao;
-    }
-    
     public void setPercepcao(int percepcao) {
         this.percepcao = percepcao;
     }
     
-    public void setBastao(boolean Bastao) {
-        this.temBastao = Bastao;
-    }
-    
-    public void setArma(boolean Arma) {
-        this.temArma = Arma;
-    }
-        
-    public void setKit(boolean Kit) {
-        this.temKit = Kit;
-    }
-    
-    public void setMunicao(int X) {
-        this.municao += X;
+    public boolean curar() {
+        return kit.usar(this);
     }
     
     @Override
-    public Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado) {
+    public int atacar(Personagem alvo) {
+        //IMPLEMENTAR
+        //DICA: o jogador agora tem o atributo "teclado" q tu pode chamar
+    }
+    
+    @Override
+    public boolean defender() {
+        //IMPLEMENTAR
+    }
+    
+    @Override
+    public Desenhavel mover(Tabuleiro tabuleiro) {
         char direcao;
         int oldX = getX();
         int oldY = getY();
@@ -95,14 +100,14 @@ public class Jogador extends Personagem {
             }
         } while (direcao != 'a' && direcao != 'd' && direcao != 'w' && direcao != 's');
         
-        if (newX >= 0 && newX < tabuleiro[0].length &&
-            newY >= 0 && newY < tabuleiro.length &&
-            !(tabuleiro[newY][newX] instanceof Parede)) {
+        if (newX >= 0 && newX < tabuleiro.getColunas() &&
+            newY >= 0 && newY < tabuleiro.getLinhas() &&
+            !(tabuleiro.getTile(newX, newY) instanceof Parede)) {
             
-            colisao = tabuleiro[newY][newX];
+            colisao = tabuleiro.getTile(newX, newY);
             
-            tabuleiro[newY][newX] = this;
-            tabuleiro[oldY][oldX] = new Blank(oldX, oldY);
+            tabuleiro.setTile(this, newX, newY);
+            tabuleiro.setTile(new Blank(oldX, oldY), oldX, oldY);
             setX(newX);
             setY(newY);
         }

@@ -4,13 +4,13 @@
  */
 package Desenhaveis;
 
-import java.util.Scanner;
+import Sistemas.Tabuleiro;
 
 /**
  *
  * @author felip
  */
-public class Dinossauro extends Personagem {
+public class Dinossauro extends Personagem implements Combatente {
     private final boolean tomaDanoDeSoco;
     private final boolean tomaDanoDeArma;
     
@@ -29,7 +29,18 @@ public class Dinossauro extends Personagem {
     }
     
     @Override
-    public Desenhavel mover(Desenhavel[][] tabuleiro, Scanner teclado) {
+    public int atacar(Personagem alvo) {
+        //IMPLEMENTAR
+    }
+    
+    @Override
+    public boolean defender() {
+        //IMPLEMENTAR
+        //OBS: se os dinossauros nao defenderem deixa esse metodo so com "return false;"
+    }
+    
+    @Override
+    public Desenhavel mover(Tabuleiro tabuleiro) {
         int oldX = getX();
         int oldY = getY();
         int newX = oldX;
@@ -53,14 +64,16 @@ public class Dinossauro extends Personagem {
                     break;
             }
 
-            if (newX >= 0 && newX < tabuleiro[0].length &&
-                newY >= 0 && newY < tabuleiro.length &&
-                (tabuleiro[newY][newX] instanceof Blank || tabuleiro[newY][newX] instanceof Jogador || tabuleiro[newY][newX] instanceof Caixa)) {
+            if (newX >= 0 && newX < tabuleiro.getColunas() &&
+                newY >= 0 && newY < tabuleiro.getLinhas() &&
+                (tabuleiro.getTile(newX, newY) instanceof Blank || tabuleiro.getTile(newX, newY) instanceof Jogador || tabuleiro.getTile(newX, newY) instanceof Caixa)) {
 
-                colisao = tabuleiro[newY][newX];
+                colisao = tabuleiro.getTile(newX, newY);
 
-                if (tabuleiro[newY][newX] instanceof Blank || tabuleiro[newY][newX] instanceof Caixa) tabuleiro[newY][newX] = this;
-                tabuleiro[oldY][oldX] = new Blank(oldX, oldY);
+                if (tabuleiro.getTile(newX, newY) instanceof Blank || tabuleiro.getTile(newX, newY) instanceof Caixa) {
+                    tabuleiro.setTile(this, newX, newY);
+                }
+                tabuleiro.setTile(new Blank(oldX, oldY), oldX, oldY);
                 setX(newX);
                 setY(newY);
 
