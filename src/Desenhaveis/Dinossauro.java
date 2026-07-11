@@ -10,7 +10,7 @@ import Sistemas.Tabuleiro;
  *
  * @author felip
  */
-public class Dinossauro extends Personagem implements Combatente {
+public class Dinossauro extends Personagem {
     private final boolean tomaDanoDeSoco;
     private final boolean tomaDanoDeArma;
     
@@ -26,17 +26,6 @@ public class Dinossauro extends Personagem implements Combatente {
     
     public boolean getTomaDanoDeArma() {
         return tomaDanoDeArma;
-    }
-    
-    @Override
-    public int atacar(Personagem alvo) {
-        //IMPLEMENTAR
-    }
-    
-    @Override
-    public boolean defender() {
-        //IMPLEMENTAR
-        //OBS: se os dinossauros nao defenderem deixa esse metodo so com "return false;"
     }
     
     @Override

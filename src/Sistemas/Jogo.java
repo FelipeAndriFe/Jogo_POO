@@ -4,8 +4,10 @@
  */
 package Sistemas;
 
+import Desenhaveis.Blank;
 import Desenhaveis.Caixa;
 import Desenhaveis.Desenhavel;
+import Desenhaveis.Dinossauro;
 import Desenhaveis.Jogador;
 import Desenhaveis.Personagem;
 import java.util.List;
@@ -74,27 +76,35 @@ public class Jogo {
         while (true) {
             Desenhavel colisao;
             int flag;
-            debugAtivo = menuManager.menuAcoes((Jogador) ativos.get(0), debugAtivo, teclado);
+            
+            Jogador player = (Jogador) ativos.get(0);
+            int playerX = player.getX();
+            int playerY = player.getY();
+            
+            debugAtivo = menuManager.menuAcoes( player, debugAtivo, teclado);
             colisao = ativos.get(0).mover(tabuleiro);
             
             if (colisao instanceof Caixa) abrirCaixa((Jogador) ativos.get(0), (Caixa) colisao);
             
-            /*
             // caso player bata no dinossauro
             if (colisao instanceof Dinossauro) {
-                flag = combate((Jogador) ativos.get(0), (Dinossauro) colisao, teclado);
-                if (flag == 2) {
-                        ativos.remove((Personagem) colisao);
+                
+                Dinossauro dino = (Dinossauro) colisao;
+                int dinoX = dino.getX();
+                int dinoY = dino.getY();
+                
+                flag = combate( player, dino, teclado );
+
+                if ( flag == 2 ) {
+                        ativos.remove( dino );
                 } else if (flag == 1) {
-                        System.exit(0);
+                        start();
+                        return;
                 } else {
                     System.out.println("Covarde.");        
-                    System.out.println("Para onde deseja se mover? ");
-                    ativos.get(0).mover(tabuleiro);
-                    ((Dinossauro) colisao).mover(tabuleiro); 
+                    voltarPosicao(player, dino, playerX, playerY, dinoX, dinoY);
                 }
             }
-            */
             
             imprimir(tabuleiro, (Jogador) ativos.get(0), debugAtivo);
             
@@ -104,8 +114,17 @@ public class Jogo {
                     return;
                 }
                 
+                int dinoX = 0;
+                int dinoY = 0;
+                    
                 if (i == 0) {
-                    debugAtivo = menuManager.menuAcoes((Jogador) ativos.get(0), debugAtivo, teclado);;
+                    debugAtivo = menuManager.menuAcoes( player, debugAtivo, teclado);
+                    playerX = player.getX();
+                    playerY = player.getY();
+                } 
+                if ( ativos.get(i) instanceof Dinossauro ){
+                    dinoX = ativos.get(i).getX();
+                    dinoY = ativos.get(i).getY();
                 }
                 colisao = ativos.get(i).mover(tabuleiro);
                 
@@ -113,50 +132,119 @@ public class Jogo {
                     if (colisao instanceof Caixa) abrirCaixa((Jogador) ativos.get(0), (Caixa) colisao);
                 }
                 
-                /*
                 // caso o player bata no dinossauro
                 if (colisao instanceof Dinossauro) {
-                    flag = combate((Jogador) ativos.get(0), (Dinossauro) colisao, teclado);
+                    
+                    Dinossauro dino = (Dinossauro) colisao;
+                    dinoX = dino.getX();
+                    dinoY = dino.getY();
+                    
+                    flag = combate( player, dino, teclado );
                     if (flag == 2) {
-                        ativos.remove((Personagem) colisao);
+                        ativos.remove( dino );
                     } else if (flag == 1) {
-                        System.exit(0);
+                        start();
+                        return;
                     } else {
-                        System.out.println("Covarde."); 
-                        System.out.println("Para onde deseja se mover? ");
-                        ativos.get(0).mover(tabuleiro);
-                        ((Dinossauro) colisao).mover(tabuleiro);
-                        continue;
+                        System.out.println("Covarde.");        
+                        voltarPosicao(player, dino, playerX, playerY, dinoX, dinoY);
                     }
                 }
                 // caso o dinossauro bata no player
                 if (colisao instanceof Jogador) {
-                    flag = combate((Jogador) colisao, (Dinossauro) ativos.get(i), teclado);
+                    
+                    Dinossauro dino = (Dinossauro) ativos.get(i);
+                    
+                    flag = combate( player, dino, teclado );
                     if (flag == 2) {
-                        ativos.remove(i);
+                        ativos.remove( dino );
                     } else if (flag == 1) {
-                        System.exit(0);
+                        start();
+                        return;
                     } else {
-                        System.out.println("Covarde.");            
-                        System.out.println("Para onde deseja se mover? ");
-                        ((Jogador) colisao).mover(tabuleiro);
-                        ativos.get(i).mover(tabuleiro);
-                        continue;
+                        System.out.println("Covarde.");      
+                        voltarPosicao(player, dino, playerX, playerY, dinoX, dinoY);
                     }
                 }
-                */
             }
             imprimir(tabuleiro, (Jogador) ativos.get(0), debugAtivo);
         }
     }
     
-    public static int combate(Personagem atacante, Personagem defensor) {
+    
+    
+    public static int combate(Jogador player, Personagem dino, Scanner teclado) {
         //IMPLEMENTAR
         //A ideia é a funcao ficar chamando os metodos "atacar()" e "defender()"
         //O codigo antigo ta comentado 
         //OBS: se o jogador morrer deve ser dado um "return" no metodo start() pro programa voltar pro main
+        System.out.println();
+        
+        int FUGIU = 0;
+        int PLAYER_MORREU = 1;
+        int DINO_MORREU = 2;
+        while (true) {
+            System.out.println("Vida Dinossauro: " + dino.getHp() );
+            System.out.println("Vida Player: " + player.getHp() );
+            
+            System.out.println("""
+                               1. Atacar
+                               2. Fugir
+                               Qual acao deseja fazer?""");
+            char acao = teclado.next().charAt(0);
+            switch ( acao ) {
+                case '1':
+                    int dano = player.atacar( dino );
+                    System.out.println("Dano dado: " + dano );
+                    dino.setHp( dino.getHp() - dano );
+                    
+                    if (dino.getHp() < 1) {
+                        System.out.println("Dinossauro morto.");
+                        return DINO_MORREU;
+                    }
+                            
+                    if ( player.defender() == false )
+                        player.setHp( player.getHp() - 1 );
+                    
+                    if ( player.getHp() < 1 ){
+                        System.out.println("Player morreu.");
+                        return PLAYER_MORREU;
+                    }
+                    break;
+                    
+                case '2':
+                    return FUGIU;
+                    
+                default:
+                    System.out.println("Digitou errado, perdeu a vez\n"); 
+                    if ( player.defender() == false )
+                        player.setHp( player.getHp() - 1 );
+                    if ( player.getHp() < 1 ) {
+                        System.out.println("Player morreu.");
+                        return PLAYER_MORREU;
+                    }
+                    break;
+            }
+            
+        }
     }
     
+    public void voltarPosicao(Jogador player, Dinossauro dino, int playerX, int playerY, int dinoX, int dinoY) {
+
+        tabuleiro.setTile( new Blank( player.getX(), player.getY() ), player.getX(), player.getY() );
+        tabuleiro.setTile( new Blank( dino.getX(), dino.getY() ), dino.getX(), dino.getY() );
+
+        player.setX(playerX);
+        player.setY(playerY);
+
+        dino.setX(dinoX);
+        dino.setY(dinoY);
+
+        tabuleiro.setTile(player, playerX, playerY);
+        tabuleiro.setTile(dino, dinoX, dinoY);
+        
+    }
+
     public static void abrirCaixa(Jogador player, Caixa caixa) {
         int conteudo = caixa.getConteudo();
     
