@@ -10,9 +10,11 @@ import Desenhaveis.Desenhavel;
 import Desenhaveis.Dinossauro;
 import Desenhaveis.Jogador;
 import Desenhaveis.Personagem;
+import GUI.GamePanel;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import javax.swing.JFrame;
 
 /**
  *
@@ -33,6 +35,20 @@ public class Jogo {
     
     public void start() {
         boolean debugAtivo = false;
+        
+        JFrame window = new JFrame();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setResizable(false);
+        window.setTitle("Sobrevivencia Jurassica");
+        
+        GamePanel gamePanel = new GamePanel(tabuleiro, (Jogador) ativos.get(0));
+        window.add(gamePanel);
+        
+        window.pack();
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
+
+        gamePanel.startGameThread();
         
         menuManager.menuBoasVindas();
         
@@ -180,9 +196,9 @@ public class Jogo {
         //OBS: se o jogador morrer deve ser dado um "return" no metodo start() pro programa voltar pro main
         System.out.println();
         
-        int FUGIU = 0;
-        int PLAYER_MORREU = 1;
-        int DINO_MORREU = 2;
+        final int FUGIU = 0;
+        final int PLAYER_MORREU = 1;
+        final int DINO_MORREU = 2;
         while (true) {
             System.out.println("Vida Dinossauro: " + dino.getHp() );
             System.out.println("Vida Player: " + player.getHp() );

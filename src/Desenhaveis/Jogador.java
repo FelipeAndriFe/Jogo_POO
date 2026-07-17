@@ -8,8 +8,11 @@ import Itens.ArmaDeDardos;
 import Itens.Bastao;
 import Itens.KitMedico;
 import Sistemas.Tabuleiro;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.Random;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -21,6 +24,17 @@ public class Jogador extends Personagem implements Combatente {
     private ArmaDeDardos arma;
     private KitMedico kit;
     private Scanner teclado;
+    private char direcao;
+    
+    public BufferedImage pegarImage() {
+        BufferedImage i = null;
+        try {
+            i = ImageIO.read(getClass().getResourceAsStream("/Imagens/Jogador.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return i;
+    }
     
     public Jogador(int x, int y, int hp, int dano, int velocidade, int percepcao, Scanner teclado) {
         super(x, y, 'P', hp, dano, velocidade);
@@ -29,6 +43,7 @@ public class Jogador extends Personagem implements Combatente {
         this.arma = null;
         this.kit = new KitMedico();
         this.teclado = teclado;
+        this.setImage(this.pegarImage());
     }
     
     public void pegarKit() {
@@ -137,9 +152,12 @@ public class Jogador extends Personagem implements Combatente {
         }
     }
     
+    public void setDirecao(char direcao) {
+        this.direcao = direcao;
+    }
+    
     @Override
     public Desenhavel mover(Tabuleiro tabuleiro) {
-        char direcao;
         int oldX = getX();
         int oldY = getY();
         int newX = oldX;
@@ -147,7 +165,6 @@ public class Jogador extends Personagem implements Combatente {
         Desenhavel colisao = null;
         
         do {
-            direcao = teclado.next().charAt(0);
             switch(direcao) {
                 case 'd':
                     newX = oldX + 1;

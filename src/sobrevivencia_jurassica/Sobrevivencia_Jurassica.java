@@ -6,19 +6,24 @@ package sobrevivencia_jurassica;
 
 import Desenhaveis.Blank;
 import Desenhaveis.Caixa;
+import Desenhaveis.Compsognato;
 import java.util.ArrayList;
 import java.util.List;
 import Desenhaveis.Desenhavel;
-import Desenhaveis.Dinossauro;
 import Desenhaveis.Jogador;
 import Desenhaveis.Parede;
 import Desenhaveis.Personagem;
+import Desenhaveis.Rex;
+import Desenhaveis.Troodonte;
+import Desenhaveis.Velociraptor;
+import GUI.GamePanel;
 import Sistemas.Jogo;
 import Sistemas.MenuManager;
 import Sistemas.Tabuleiro;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import javax.swing.JFrame;
 
 /**
  *
@@ -238,19 +243,19 @@ public class Sobrevivencia_Jurassica {
                 tabuleiro[y][x] = new Parede(x,y);
                 break;
             case 'C':
-                tabuleiro[y][x] = new Dinossauro(x, y, 'C', 1, 1, 1, true, true);
+                tabuleiro[y][x] = new Compsognato(x, y, 'C', 1, 1, 1, true, true);
                 ativos.add((Personagem)tabuleiro[y][x]);
                 break;
             case 'V':
-                tabuleiro[y][x] = new Dinossauro(x, y, 'V', 2, 1, 2, true, false);
+                tabuleiro[y][x] = new Velociraptor(x, y, 'V', 2, 1, 2, true, false);
                 ativos.add((Personagem)tabuleiro[y][x]);
                 break;
             case 'R':
-                tabuleiro[y][x] = new Dinossauro(x, y, 'R', 3, 1, 0, false, true);
+                tabuleiro[y][x] = new Rex(x, y, 'R', 3, 1, 0, false, true);
                 ativos.add((Personagem)tabuleiro[y][x]);
                 break;
             case 'T':
-                tabuleiro[y][x] = new Dinossauro(x, y, 'T', 2, 1, 1, true, true);
+                tabuleiro[y][x] = new Troodonte(x, y, 'T', 2, 1, 1, true, true);
                 ativos.add((Personagem)tabuleiro[y][x]);
                 break;
             case 'X':

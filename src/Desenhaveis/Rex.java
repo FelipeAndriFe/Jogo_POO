@@ -12,26 +12,19 @@ import javax.imageio.ImageIO;
  *
  * @author felip
  */
-public class Caixa extends Desenhavel {
-    private final int conteudo;
-    
+public class Rex extends Dinossauro {
+    @Override
     public BufferedImage pegarImage() {
         BufferedImage i = null;
         try {
-            i = ImageIO.read(getClass().getResourceAsStream("/Imagens/Caixa.png"));
+            i = ImageIO.read(getClass().getResourceAsStream("/Imagens/Rex.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         return i;
     }
     
-    public Caixa(int x, int y, int conteudo) {
-        super(x, y, 'X');
-        this.conteudo = conteudo;
-        this.setImage(this.pegarImage());
-    }
-    
-    public int getConteudo() {
-        return conteudo;
+    public Rex(int x, int y, char simbolo, int hp, int dano, int velocidade, boolean tomaDanoDeSoco, boolean tomaDanoDeArma) {
+        super(x, y, simbolo, hp, dano, velocidade, tomaDanoDeSoco, tomaDanoDeArma);
     }
 }

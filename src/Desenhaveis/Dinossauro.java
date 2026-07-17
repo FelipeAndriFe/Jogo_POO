@@ -5,19 +5,23 @@
 package Desenhaveis;
 
 import Sistemas.Tabuleiro;
+import java.awt.image.BufferedImage;
 
 /**
  *
  * @author felip
  */
-public class Dinossauro extends Personagem {
+public abstract class Dinossauro extends Personagem {
     private final boolean tomaDanoDeSoco;
     private final boolean tomaDanoDeArma;
+    
+    public abstract BufferedImage pegarImage();
     
     public Dinossauro(int x, int y, char simbolo, int hp, int dano, int velocidade, boolean tomaDanoDeSoco, boolean tomaDanoDeArma) {
         super(x, y, simbolo, hp, dano, velocidade);
         this.tomaDanoDeSoco = tomaDanoDeSoco;
         this.tomaDanoDeArma = tomaDanoDeArma;
+        this.setImage(this.pegarImage());
     }
     
     public boolean getTomaDanoDeSoco() {
